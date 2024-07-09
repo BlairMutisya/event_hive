@@ -35,6 +35,44 @@ const Contact = () => {
       setSubmitting(false);
     }
   };
+  return (
+    <div className="contact-us-section">
+      <h2>Contact Us</h2>
+      <Formik
+        initialValues={{ name: "", email: "", subject: "", message: "" }}
+        validationSchema={ContactSchema}
+        onSubmit={handleSubmit}
+      >
+        {({ isSubmitting }) => (
+          <Form className="contact-form">
+            <div className="form-group">
+              <label htmlFor="name">Name</label>
+              <Field type="text" name="name" className="input-field" />
+              <ErrorMessage name="name" component="div" className="error" />
+            </div>
+            <div className="form-group">
+              <label htmlFor="email">Email</label>
+              <Field type="email" name="email" className="input-field" />
+              <ErrorMessage name="email" component="div" className="error" />
+            </div>
+            <div className="form-group">
+              <label htmlFor="subject">Subject</label>
+              <Field type="text" name="subject" className="input-field" />
+              <ErrorMessage name="subject" component="div" className="error" />
+            </div>
+            <div className="form-group">
+              <label htmlFor="message">Message</label>
+              <Field as="textarea" name="message" className="input-field" />
+              <ErrorMessage name="message" component="div" className="error" />
+            </div>
+            <button type="submit" className="submit" disabled={isSubmitting}>
+              Submit
+            </button>
+          </Form>
+        )}
+      </Formik>
+    </div>
+  );
 }
 
 export default Contact
