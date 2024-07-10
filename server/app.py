@@ -76,7 +76,17 @@ class Contact(db.Model):
 class UserSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = User
+class EventSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Event
 
+class ReservationSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Reservation
+
+class ContactSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Contact
 
 
 
