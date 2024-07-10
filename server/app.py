@@ -30,10 +30,14 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 migrate = Migrate(app, db)  # Set up Flask-Migrate
 jwt = JWTManager(app)  # Initialize JWT Manager
-@app.route('/')
-def index():
-    return '<h1>Project Server</h1>'
-
+# Define the User model
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(200), nullable=False)
+    events = db.relationship('Event', backref='organizer', lazy=True)
+    reservations = db.relationship('Reservation', backref='user', lazy=True)
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
