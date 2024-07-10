@@ -57,6 +57,24 @@ class Event(db.Model):
     image_url = db.Column(db.String(200), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     reservations = db.relationship('Reservation', backref='event', lazy=True)
+
+# Define the Reservation model
+class Reservation(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    status = db.Column(db.String(50), nullable=False)
+
+
+
+
+
+
+
+
+
+
+
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
 
