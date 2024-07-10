@@ -538,7 +538,7 @@
     margin-left: 550px;
   }
   
-  .event-list-create-event-link:hover {
+  .event-list-create-event-link:hover { 
     background-color: red;
   }
   
