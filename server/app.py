@@ -172,6 +172,28 @@ def update_user(current_user, id):
     db.session.commit()
     return user_schema.jsonify(user)
 
+@app.route('/users/<id>', methods=['DELETE'])
+@token_required
+def delete_user(current_user, id):
+    user = User.query.get_or_404(id)
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({'message': 'User deleted'})
+
+# CRUD operations for Reservation
+@app.route('/reservations', methods=['POST'])
+@token_required
+def add_reservation(current_user):
+    data = request.get_json()
+    new_reservation = Reservation(
+        event_id=data['event_id'],
+        user_id=current_user.id,
+        status=data['status']
+    )
+    db.session.add(new_reservation)
+    db.session.commit()
+    return reservation_schema.jsonify(new_reservation)
+
 
 
 if __name__ == '__main__':
