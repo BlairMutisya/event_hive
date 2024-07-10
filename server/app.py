@@ -200,6 +200,23 @@ def get_reservations(current_user):
     all_reservations = Reservation.query.all()
     return reservations_schema.jsonify(all_reservations)
 
+@app.route('/reservations/<id>', methods=['GET'])
+@token_required
+def get_reservation(current_user, id):
+    reservation = Reservation.query.get_or_404(id)
+    return reservation_schema.jsonify(reservation)
+
+@app.route('/reservations/<id>', methods=['PUT'])
+@token_required
+def update_reservation(current_user, id):
+    reservation = Reservation.query.get_or_404(id)
+    data = request.get_json()
+    reservation.event_id = data['event_id']
+    reservation.user_id = data['user_id']
+    reservation.status = data['status']
+    db.session.commit()
+    return reservation_schema.jsonify(reservation)
+
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
 
