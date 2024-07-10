@@ -88,6 +88,15 @@ class ContactSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Contact
 
+user_schema = UserSchema()
+users_schema = UserSchema(many=True)
+event_schema = EventSchema()
+events_schema = EventSchema(many=True)
+reservation_schema = ReservationSchema()
+reservations_schema = ReservationSchema(many=True)
+contact_schema = ContactSchema()
+contacts_schema = ContactSchema(many=True)
+
 
 
 
