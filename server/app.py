@@ -160,6 +160,18 @@ def get_user(current_user, id):
     user = User.query.get_or_404(id)
     return user_schema.jsonify(user)
 
+@app.route('/users/<id>', methods=['PUT'])
+@token_required
+def update_user(current_user, id):
+    user = User.query.get_or_404(id)
+    data = request.get_json()
+    user.username = data['username']
+    user.email = data['email']
+    if 'password' in data:
+        user.password = generate_password_hash(data['password'], method='sha256')
+    db.session.commit()
+    return user_schema.jsonify(user)
+
 
 
 if __name__ == '__main__':
