@@ -114,7 +114,10 @@ def token_required(f):
         return f(current_user, *args, **kwargs)
     return decorated
 
-
+# Root route
+@app.route('/')
+def index():
+    return Response('Welcome to Event Hive API', mimetype='text/plain')
 
 
 if __name__ == '__main__':
