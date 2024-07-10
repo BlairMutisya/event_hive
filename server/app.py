@@ -288,6 +288,17 @@ def update_event(current_user, id):
     event.user_id = current_user.id
     db.session.commit()
     return event_schema.jsonify(event)
+
+@app.route('/events/<id>', methods=['DELETE'])
+@token_required
+def delete_event(current_user, id):
+    event = Event.query.get_or_404(id)
+    db.session.delete(event)
+    db.session.commit()
+    return jsonify({'message': 'Event deleted'})
+
+
+
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
 
