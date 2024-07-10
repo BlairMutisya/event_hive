@@ -119,7 +119,38 @@ def token_required(f):
 def index():
     return Response('Welcome to Event Hive API', mimetype='text/plain')
 
+# User registration
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    hashed_password = generate_password_hash(data['password'], method='sha256')
+    new_user = User(username=data['username'], email=data['email'], password=hashed_password)
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify({'message': 'Registered successfully'})
 
+# User login
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    user = User.query.filter_by(email=data['email']).first()
+
+    if not user or not check_password_hash(user.password, data['password']):
+        return jsonify({'message': 'Invalid credentials'}), 401
+
+    token = create_access_token(identity=user.id, expires_delta=datetime.timedelta(hours=24))
+    return jsonify({'token': token})
+
+# Handle preflight requests
+@app.before_request
+def handle_preflight():
+    if request.method == 'OPTIONS':
+        return Response(status=204)
+    
+
+
+
+    
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
 
