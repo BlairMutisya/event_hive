@@ -217,6 +217,53 @@ def update_reservation(current_user, id):
     db.session.commit()
     return reservation_schema.jsonify(reservation)
 
+@app.route('/reservations/<id>', methods=['DELETE'])
+@token_required
+def delete_reservation(current_user, id):
+    reservation = Reservation.query.get_or_404(id)
+    db.session.delete(reservation)
+    db.session.commit()
+    return jsonify({'message': 'Reservation deleted'})
+
+# CRUD operations for Event
+@app.route('/events', methods=['POST', 'OPTIONS'])
+@token_required
+def add_event(current_user):
+    if request.method == 'OPTIONS':
+        return Response(status=204)
+    try:
+        data = request.get_json()
+        new_event = Event(
+            title=data['title'],
+            description=data['description'],
+            date=data['date'],
+            location=data['location'],
+            medium=data['medium'],
+            start_date=data['startDate'],
+            end_date=data['endDate'],
+            start_time=data['startTime'],
+            end_time=data['endTime'],
+            max_participants=data['maxParticipants'],
+            category=data['category'],
+            accept_reservation=data['acceptReservation'],
+            image_url=data['imageUrl'],
+            user_id=current_user.id
+        )
+        db.session.add(new_event)
+        db.session.commit()
+        return event_schema.jsonify(new_event), 201
+    except Exception as e:
+        print(f"Error adding event: {str(e)}")
+        return jsonify({'message': 'Error adding event'}), 500
+
+@app.route('/events', methods=['GET'])
+@token_required
+def get_events(current_user):
+    all_events = Event.query.all()
+    return events_schema.jsonify(all_events)
+
+
+
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
 
