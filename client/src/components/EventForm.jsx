@@ -151,3 +151,125 @@ const EventForm = () => {
               </Field>
               <ErrorMessage name="medium" component="div" className="error" />
             </div>
+            <div className="form-group">
+              <label htmlFor="startDate">Start Date</label>
+              <Field
+                type="date"
+                id="startDate"
+                name="startDate"
+                className="input-field"
+              />
+              <ErrorMessage
+                name="startDate"
+                component="div"
+                className="error"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="endDate">End Date</label>
+              <Field
+                type="date"
+                id="endDate"
+                name="endDate"
+                className="input-field"
+              />
+              <ErrorMessage name="endDate" component="div" className="error" />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="startTime">Start Time</label>
+              <Field
+                type="time"
+                id="startTime"
+                name="startTime"
+                className="input-field"
+              />
+              <ErrorMessage
+                name="startTime"
+                component="div"
+                className="error"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="endTime">End Time</label>
+              <Field
+                type="time"
+                id="endTime"
+                name="endTime"
+                className="input-field"
+              />
+              <ErrorMessage name="endTime" component="div" className="error" />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="maxParticipants">Max Participants</label>
+              <Field
+                type="number"
+                id="maxParticipants"
+                name="maxParticipants"
+                className="input-field"
+              />
+              <ErrorMessage
+                name="maxParticipants"
+                component="div"
+                className="error"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="category">Category</label>
+              <Field
+                as="select"
+                id="category"
+                name="category"
+                className="input-field"
+              >
+                <option value="">Select Category</option>
+                <option value="workshop">Workshop</option>
+                <option value="conference">Conference</option>
+                <option value="networking">Networking</option>
+              </Field>
+              <ErrorMessage name="category" component="div" className="error" />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="acceptReservation">
+                <Field
+                  type="checkbox"
+                  id="acceptReservation"
+                  name="acceptReservation"
+                  className="checkbox-field"
+                />
+                Accept Reservation
+              </label>
+              <ErrorMessage
+                name="acceptReservation"
+                component="div"
+                className="error"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="imageUrl">Image URL</label>
+              <Field
+                type="text"
+                id="imageUrl"
+                name="imageUrl"
+                className="input-field"
+              />
+              <ErrorMessage name="imageUrl" component="div" className="error" />
+            </div>
+
+            <button type="submit" disabled={isSubmitting} className="submit">
+              {isSubmitting ? "Creating..." : "Create Event"}
+            </button>
+          </Form>
+        )}
+      </Formik>
+    </div>
+  );
+};
+
+export default EventForm;
