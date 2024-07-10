@@ -194,7 +194,11 @@ def add_reservation(current_user):
     db.session.commit()
     return reservation_schema.jsonify(new_reservation)
 
-
+@app.route('/reservations', methods=['GET'])
+@token_required
+def get_reservations(current_user):
+    all_reservations = Reservation.query.all()
+    return reservations_schema.jsonify(all_reservations)
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
