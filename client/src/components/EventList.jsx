@@ -47,3 +47,47 @@ const EventList = () => {
     console.log("Deleting event with ID:", eventId);
     // Example: You can perform a DELETE request to the API
   };
+  return (
+      <div className="event-list-container">
+        <div className="event-list-filter-container">
+          <input
+            onChange={(e) => setSearchTerm(e.target.value)}
+            type="text"
+            placeholder="Search"
+            className="event-list-search-input"
+          />
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="event-list-filter-select"
+          >
+            <option value="total">Total</option>
+            <option value="private">Name</option>
+            <option value="public">Date</option>
+            <option value="offline">In-person</option>
+            <option value="online">Online</option>
+          </select>
+        </div>
+        <div className="event-list-card-slider">
+          <div className="event-list-card-container">
+            {filteredEvents.length > 0 ? (
+              filteredEvents.map((event) => (
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  onDelete={handleDeleteEvent}
+                />
+              ))
+            ) : (
+              <p className="event-list-no-events">No events found</p>
+            )}
+          </div>
+        </div>
+        <Link to="/dashboard" className="event-list-create-event-link">
+          Create New Event
+        </Link>
+      </div>
+    );
+  };
+  
+  export default EventList;
