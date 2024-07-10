@@ -262,8 +262,32 @@ def get_events(current_user):
     all_events = Event.query.all()
     return events_schema.jsonify(all_events)
 
-
-
+@app.route('/events/<id>', methods=['GET'])
+@token_required
+def get_event(current_user, id):
+    event = Event.query.get_or_404(id)
+    return event_schema.jsonify(event)
+@app.route('/events/<id>', methods=['PUT'])
+@token_required
+def update_event(current_user, id):
+    event = Event.query.get_or_404(id)
+    data = request.get_json()
+    event.title = data['title']
+    event.description = data['description']
+    event.date = data['date']
+    event.location = data['location']
+    event.medium = data['medium']
+    event.start_date = data['startDate']
+    event.end_date = data['endDate']
+    event.start_time = data['startTime']
+    event.end_time = data['endTime']
+    event.max_participants = data['maxParticipants']
+    event.category = data['category']
+    event.accept_reservation = data['acceptReservation']
+    event.image_url = data['imageUrl']
+    event.user_id = current_user.id
+    db.session.commit()
+    return event_schema.jsonify(event)
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
 
