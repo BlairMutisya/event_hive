@@ -297,7 +297,54 @@ def delete_event(current_user, id):
     db.session.commit()
     return jsonify({'message': 'Event deleted'})
 
+# CRUD operations for Contact
+@app.route('/contact', methods=['POST'])
+def add_contact():
+    data = request.get_json()
+    new_contact = Contact(
+        name=data['name'],
+        email=data['email'],
+        message=data['message']
+    )
+    db.session.add(new_contact)
+    db.session.commit()
+    return contact_schema.jsonify(new_contact)
 
+@app.route('/contact', methods=['GET'])
+@token_required
+def get_contacts(current_user):
+    all_contacts = Contact.query.all()
+    return contacts_schema.jsonify(all_contacts)
+
+@app.route('/contact/<id>', methods=['GET'])
+@token_required
+def get_contact(current_user, id):
+    contact = Contact.query.get_or_404(id)
+    return contact_schema.jsonify(contact)
+
+@app.route('/contact/<id>', methods=['PUT'])
+@token_required
+def update_contact(current_user, id):
+    contact = Contact.query.get_or_404(id)
+    data = request.get_json()
+    contact.name = data['name']
+    contact.email = data['email']
+    contact.message = data['message']
+    db.session.commit()
+    return contact_schema.jsonify(contact)
+
+@app.route('/contact/<id>', methods=['DELETE'])
+@token_required
+def delete_contact(current_user, id):
+    contact = Contact.query.get_or_404(id)
+    db.session.delete(contact)
+    db.session.commit()
+    return jsonify({'message': 'Contact deleted'})
+
+if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
+    app.run(debug=True)
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
