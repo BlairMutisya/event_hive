@@ -39,6 +39,24 @@ class User(db.Model):
     events = db.relationship('Event', backref='organizer', lazy=True)
     reservations = db.relationship('Reservation', backref='user', lazy=True)
 
+# Define the Event model
+class Event(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(200), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    location = db.Column(db.String(100), nullable=False)
+    medium = db.Column(db.String(50), nullable=False)
+    start_date = db.Column(db.Date, nullable=False)
+    end_date = db.Column(db.Date, nullable=False)
+    start_time = db.Column(db.Time, nullable=False)
+    end_time = db.Column(db.Time, nullable=False)
+    max_participants = db.Column(db.Integer, nullable=False)
+    category = db.Column(db.String(50), nullable=False)
+    accept_reservation = db.Column(db.Boolean, nullable=False)
+    image_url = db.Column(db.String(200), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    reservations = db.relationship('Reservation', backref='event', lazy=True)
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
 
