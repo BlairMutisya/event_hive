@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-
-# Standard library imports
-
 from flask import Flask, request, jsonify, Response
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
@@ -15,7 +11,6 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity
 import random
 
-
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})  # Apply CORS to your Flask app
 
@@ -24,12 +19,13 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'fdvayudfaihfuhaeuifh' + str(random.randint(1, 1000000000000))  # Replace with a strong secret key
 app.config['SECRET_KEY'] = 'GHCYFYTFTYFGHVYJG' + str(random.randint(1, 1000000000000))
-# Views go here!
+
 # Initialize the database
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 migrate = Migrate(app, db)  # Set up Flask-Migrate
 jwt = JWTManager(app)  # Initialize JWT Manager
+
 # Define the User model
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -76,6 +72,7 @@ class Contact(db.Model):
 class UserSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = User
+
 class EventSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Event
@@ -141,12 +138,13 @@ def login():
     token = create_access_token(identity=user.id, expires_delta=datetime.timedelta(hours=24))
     return jsonify({'token': token})
 
+
 # Handle preflight requests
 @app.before_request
 def handle_preflight():
     if request.method == 'OPTIONS':
         return Response(status=204)
-    
+
 # CRUD operations for User
 @app.route('/users', methods=['GET'])
 @token_required
@@ -256,6 +254,8 @@ def add_event(current_user):
         print(f"Error adding event: {str(e)}")
         return jsonify({'message': 'Error adding event'}), 500
 
+
+
 @app.route('/events', methods=['GET'])
 @token_required
 def get_events(current_user):
@@ -267,6 +267,7 @@ def get_events(current_user):
 def get_event(current_user, id):
     event = Event.query.get_or_404(id)
     return event_schema.jsonify(event)
+
 @app.route('/events/<id>', methods=['PUT'])
 @token_required
 def update_event(current_user, id):
@@ -345,7 +346,3 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run(debug=True)
-
-if __name__ == '__main__':
-    app.run(port=5555, debug=True)
-
