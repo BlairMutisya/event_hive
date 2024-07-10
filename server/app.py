@@ -16,9 +16,8 @@ from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity
 import random
 
 
-# Local imports
-from config import app, db, api
-# Add your model imports
+app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})  # Apply CORS to your Flask app
 
 
 # Views go here!
