@@ -65,9 +65,17 @@ class Reservation(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     status = db.Column(db.String(50), nullable=False)
 
+# Define the Contact model
+class Contact(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), nullable=False)
+    message = db.Column(db.String(500), nullable=False)
 
-
-
+# Define the schemas
+class UserSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = User
 
 
 
