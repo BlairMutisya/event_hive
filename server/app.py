@@ -25,7 +25,11 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'fdvayudfaihfuhaeuifh' + str(random.randint(1, 1000000000000))  # Replace with a strong secret key
 app.config['SECRET_KEY'] = 'GHCYFYTFTYFGHVYJG' + str(random.randint(1, 1000000000000))
 # Views go here!
-
+# Initialize the database
+db = SQLAlchemy(app)
+ma = Marshmallow(app)
+migrate = Migrate(app, db)  # Set up Flask-Migrate
+jwt = JWTManager(app)  # Initialize JWT Manager
 @app.route('/')
 def index():
     return '<h1>Project Server</h1>'
