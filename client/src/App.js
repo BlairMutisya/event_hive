@@ -7,7 +7,7 @@ import Register from './components/Register';
 import EventList from './components/EventList';
 import EventDetail from './components/EventDetail';
 import Navbar from './components/Navbar';
-import NotFound from './components/NotFound';
+
 import SearchResults from './components/SearchResults';
 import Dashboard from './components/Dashboard';
 import Home from './components/Home';
@@ -27,7 +27,7 @@ function App() {
         <Route exact path="/events/:id" component={EventDetail} />
         <Route exact path="/contact" component={ContactUs} />
         <Route exact path="/search" component={SearchResults} />
-        <Route component={NotFound} />
+
       </Switch>
     </Router>
   );
