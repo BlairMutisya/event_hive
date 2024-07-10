@@ -154,6 +154,12 @@ def get_users(current_user):
     all_users = User.query.all()
     return users_schema.jsonify(all_users)
 
+@app.route('/users/<id>', methods=['GET'])
+@token_required
+def get_user(current_user, id):
+    user = User.query.get_or_404(id)
+    return user_schema.jsonify(user)
+
 
 
 if __name__ == '__main__':
