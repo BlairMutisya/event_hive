@@ -1,4 +1,3 @@
-// EventList.js
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import EventCard from "./EventCard";
@@ -44,9 +43,21 @@ const EventList = () => {
   }, [events, searchTerm, filter]);
 
   const handleDeleteEvent = (eventId) => {
-    // Implement delete logic here
-    console.log("Deleting event with ID:", eventId);
-    // Example: You can perform a DELETE request to the API
+    // Perform DELETE request to API
+    fetch(`http://localhost:5000/events/${eventId}`, {
+      method: "DELETE",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to delete event");
+        }
+        // Update frontend state after successful deletion
+        setEvents(events.filter((event) => event.id !== eventId));
+        setFilteredEvents(filteredEvents.filter((event) => event.id !== eventId));
+      })
+      .catch((error) => {
+        console.error("Error deleting event:", error);
+      });
   };
 
   return (
@@ -76,7 +87,7 @@ const EventList = () => {
             <EventCard
               key={event.id}
               event={event}
-              onDelete={handleDeleteEvent}
+              onDelete={handleDeleteEvent} // Pass onDelete function to EventCard
             />
           ))
         ) : (

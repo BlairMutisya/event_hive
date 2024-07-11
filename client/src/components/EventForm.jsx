@@ -37,9 +37,9 @@ const EventForm = () => {
       .required("Image URL is required"),
   });
 
-  const handleSubmit = async (values, { setSubmitting }) => {
+  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
-      const user_id = 1;
+      const user_id = 1; // Replace with actual user ID
       const formData = {
         title: values.title,
         description: values.description,
@@ -61,7 +61,6 @@ const EventForm = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // Remove Authorization header for unauthenticated access
         },
         body: JSON.stringify(formData),
       });
@@ -73,6 +72,7 @@ const EventForm = () => {
 
       const data = await response.json();
       console.log("Event created:", data);
+      resetForm();
       setSubmitting(false);
       // Optionally handle success state or redirect
     } catch (error) {
@@ -110,11 +110,7 @@ const EventForm = () => {
                 name="description"
                 className="input-field"
               />
-              <ErrorMessage
-                name="description"
-                component="div"
-                className="error"
-              />
+              <ErrorMessage name="description" component="div" className="error" />
             </div>
 
             <div className="form-group">
@@ -162,11 +158,7 @@ const EventForm = () => {
                 name="startDate"
                 className="input-field"
               />
-              <ErrorMessage
-                name="startDate"
-                component="div"
-                className="error"
-              />
+              <ErrorMessage name="startDate" component="div" className="error" />
             </div>
 
             <div className="form-group">
@@ -188,11 +180,7 @@ const EventForm = () => {
                 name="startTime"
                 className="input-field"
               />
-              <ErrorMessage
-                name="startTime"
-                component="div"
-                className="error"
-              />
+              <ErrorMessage name="startTime" component="div" className="error" />
             </div>
 
             <div className="form-group">
@@ -214,11 +202,7 @@ const EventForm = () => {
                 name="maxParticipants"
                 className="input-field"
               />
-              <ErrorMessage
-                name="maxParticipants"
-                component="div"
-                className="error"
-              />
+              <ErrorMessage name="maxParticipants" component="div" className="error" />
             </div>
 
             <div className="form-group">
@@ -247,11 +231,7 @@ const EventForm = () => {
                 />
                 Accept Reservation
               </label>
-              <ErrorMessage
-                name="acceptReservation"
-                component="div"
-                className="error"
-              />
+              <ErrorMessage name="acceptReservation" component="div" className="error" />
             </div>
 
             <div className="form-group">

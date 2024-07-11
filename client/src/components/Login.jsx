@@ -1,6 +1,7 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { useHistory } from "react-router-dom"; // Import useHistory hook
 import "../styles.css"; // Import your custom styles
 
 const loginSchema = Yup.object().shape({
@@ -9,6 +10,8 @@ const loginSchema = Yup.object().shape({
 });
 
 function Login() {
+  const history = useHistory(); // Initialize useHistory hook
+
   return (
     <div className="form-box">
       <div className="login-container">
@@ -32,8 +35,7 @@ function Login() {
                 alert(`Welcome, ${data.username}!`); // Show a popup with welcome message
                 localStorage.setItem("token", data.token); // Save the token to localStorage
                 setSubmitting(false);
-                // Redirect to dashboard or handle login success
-                // For example, you can use history.push('/dashboard') if using React Router
+                history.push("/events"); // Redirect to '/events' page
               })
               .catch((error) => {
                 console.error("Error logging in:", error);

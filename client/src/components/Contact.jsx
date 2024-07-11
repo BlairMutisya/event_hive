@@ -1,13 +1,6 @@
-<<<<<<< HEAD
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-=======
-import React from 'react'
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
-
->>>>>>> f2e9ea81f3f99ef25df58e7c31eaf10ee024c3a1
 
 const ContactUs = () => {
   // Validation schema for Formik

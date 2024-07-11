@@ -121,6 +121,34 @@ def login():
     token = create_access_token(identity=user.id, expires_delta=timedelta(hours=24))  # Correct usage of timedelta
     return jsonify({'token': token})
 
+# Route for handling contact form submission
+@app.route('/contact', methods=['POST'])
+def contact():
+    try:
+        # Get data from request
+        data = request.get_json()
+
+        # Create new Contact instance
+        new_contact = Contact(
+            name=data['name'],
+            email=data['email'],
+            subject=data['subject'],
+            message=data['message']
+        )
+
+        # Add new contact to the database
+        db.session.add(new_contact)
+        db.session.commit()
+
+        # Return success response
+        return jsonify({'message': 'Contact form submitted successfully'}), 201
+
+    except Exception as e:
+        # Rollback transaction on error
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
 # Handle preflight requests
 @app.before_request
 def handle_preflight():
@@ -263,27 +291,25 @@ def get_events():
 @app.route('/events/<int:id>', methods=['GET'])
 def get_event(id):
     event = Event.query.get_or_404(id)
-    return event_schema.jsonify(event)
+    return jsonify(event_schema.dump(event))
 
 @app.route('/events/<int:id>', methods=['PUT'])
 def update_event(id):
     event = Event.query.get_or_404(id)
     data = request.get_json()
+    
+    # Update event fields
     event.title = data['title']
     event.description = data['description']
     event.date = datetime.strptime(data['date'], '%Y-%m-%d').date()
     event.location = data['location']
     event.medium = data['medium']
-    event.start_date = datetime.strptime(data['startDate'], '%Y-%m-%d').date()
-    event.end_date = datetime.strptime(data['endDate'], '%Y-%m-%d').date()
-    event.start_time = datetime.strptime(data['startTime'], '%H:%M').time()
-    event.end_time = datetime.strptime(data['endTime'], '%H:%M').time()
-    event.max_participants = data['maxParticipants']
     event.category = data['category']
-    event.accept_reservation = data['acceptReservation']
-    event.image_url = data['imageURL']
+    
     db.session.commit()
-    return event_schema.jsonify(event)
+
+    # Return JSON response using jsonify function
+    return jsonify(event_schema.dump(event))
 
 @app.route('/events/<int:id>', methods=['DELETE'])
 def delete_event(id):

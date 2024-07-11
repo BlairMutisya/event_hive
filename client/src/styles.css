@@ -268,7 +268,7 @@
     padding: 10px 20px;
     margin-right: 10px;
     font-size: 16px;
-    background-color: #fe4e5b; /* Your preferred red color */
+    background-color: #0056b3; /* Your preferred red color */
     color: white;
     border: none;
     border-radius: 5px;
@@ -473,6 +473,8 @@
   /* Adjust dropdown content color */
   /* styles.css */
 
+/* styles.css */
+
 .event-list-container {
   max-width: 800px;
   margin: 0 auto;
@@ -485,14 +487,10 @@
   margin-bottom: 20px;
 }
 
-.event-list-search-input {
-  padding: 8px;
-  width: 200px;
-}
-
+.event-list-search-input,
 .event-list-filter-select {
   padding: 8px;
-  width: 150px;
+  width: 200px; /* Adjust width as needed */
 }
 
 .event-list-card-container {
@@ -502,6 +500,7 @@
 }
 
 .event-card {
+  background-color: #f5f5f5;
   border: 1px solid #ddd;
   border-radius: 8px;
   overflow: hidden;
@@ -529,12 +528,10 @@
   margin-bottom: 8px;
 }
 
-.event-card-date {
-  font-size: 12px;
-  color: #666;
-}
-
-.event-card-location {
+.event-card-date,
+.event-card-location,
+.event-card-medium 
+{
   font-size: 12px;
   color: #666;
   margin-bottom: 8px;
@@ -566,11 +563,12 @@
   text-align: center;
   color: #666;
 }
+
 .event-list-create-event-link {
   display: inline-block;
   margin-top: 20px;
   padding: 10px 20px;
-  background-color: #28a745; /* Change this color to match your design */
+  background-color: #0056b3; /* Change this color to match your design */
   color: #fff;
   text-align: center;
   border-radius: 5px;
@@ -578,9 +576,99 @@
   font-size: 16px;
   font-weight: bold;
   transition: background-color 0.3s ease, transform 0.3s ease;
+  align-items: center;
+
 }
 
 .event-list-create-event-link:hover {
-  background-color: #218838; /* Change this color for hover state */
+  background-color: #0056b3; /* Change this color for hover state */
   transform: translateY(-2px);
 }
+.event-detail-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.event-detail-card {
+  width: 10cm; /* Set width of the card */
+  height: 13cm; /* Set height of the card */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff; /* Background color for the card */
+}
+
+.event-detail-img-top {
+  width: 100%;
+  height: auto;
+  max-height: 300px; /* Limit the maximum height of the image */
+  object-fit: cover;
+}
+
+.event-detail-details {
+  padding: 16px;
+  width: 100%;
+  text-align: center;
+}
+
+.event-detail-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.event-detail-description {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.event-detail-date,
+.event-detail-location,
+.event-detail-category,
+.event-detail-medium,
+.event-detail-startDate,
+.event-detail-endDate,
+.event-detail-startTime,
+.event-detail-endTime,
+.event-detail-maxParticipants
+  {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.event-detail-buttons {
+  margin-top: 16px;
+}
+
+.back-button,
+.update-button {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  margin: 0 8px; /* Add margin between buttons */
+}
+
+.back-button:hover,
+.update-button:hover {
+  background-color: #0056b3;
+}
+
+@media (max-width: 768px) {
+  .event-detail-card {
+    width: 90%;
+  }
+}
+
