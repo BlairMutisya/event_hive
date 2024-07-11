@@ -1,0 +1,82 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #0e152f; /* Black background */
+  color: white;
+}
+
+.navbar-brand .nav-link {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: white;
+}
+
+.navbar-links .nav-link {
+  margin-right: 20px;
+  color: white;
+  transition: color 0.2s ease-in-out; /* Responsive hover effect */
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.navbar-left .nav-link {
+  display: flex;
+  align-items: center;
+  color: white;
+  transition: color 0.2s ease-in-out; /* Responsive hover effect */
+}
+
+.navbar-left .auth-icon {
+  margin-right: 5px;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.active-link {
+  text-decoration: underline;
+}
+
+@media screen and (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .navbar-links {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  .navbar-links .nav-link,
+  .navbar-left .nav-link {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  .navbar-left {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .auth-icon{
+    spacing:2cm
+  }
+  .navbar-left .auth-icon {
+    margin-right: 3px;
+    spacing:1cm
+  }
+}
