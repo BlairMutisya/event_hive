@@ -114,7 +114,7 @@ flask db upgrade head
 **`client/`**
 The **`client/`** directory contains all of your frontend code.
 
-**Setting Up the Client
+**Setting Up the Client**
 1. Install the dependencies:
 ```console
 npm install --prefix client
