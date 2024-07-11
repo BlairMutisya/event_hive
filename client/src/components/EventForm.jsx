@@ -16,9 +16,9 @@ const EventForm = () => {
     maxParticipants: "",
     category: "",
     acceptReservation: false,
-    imageUrl: "", 
+    imageURL: "",
   };
-  
+
   const validationSchema = Yup.object().shape({
     title: Yup.string().required("Title is required"),
     description: Yup.string().required("Description is required"),
@@ -32,14 +32,14 @@ const EventForm = () => {
     maxParticipants: Yup.number().required("Max Participants is required"),
     category: Yup.string().required("Category is required"),
     acceptReservation: Yup.boolean().required("Accept Reservation is required"),
-    imageUrl: Yup.string()
+    imageURL: Yup.string()
       .url("Must be a valid URL")
       .required("Image URL is required"),
   });
-  
+
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      const token = localStorage.getItem('token'); // Retrieve token from localStorage
+      const user_id = 1;
       const formData = {
         title: values.title,
         description: values.description,
@@ -50,23 +50,25 @@ const EventForm = () => {
         endDate: values.endDate,
         startTime: values.startTime,
         endTime: values.endTime,
-        maxParticipants: values.maxParticipants,
+        maxParticipants: parseInt(values.maxParticipants),
         category: values.category,
         acceptReservation: values.acceptReservation,
-        imageUrl: values.imageUrl,
+        imageURL: values.imageURL,
+        user_id: user_id,
       };
 
       const response = await fetch("http://localhost:5000/events", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-access-tokens": token,
+          // Remove Authorization header for unauthenticated access
         },
         body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        const errorData = await response.json();
+        throw new Error(`Network response was not ok: ${errorData.error}`);
       }
 
       const data = await response.json();
@@ -151,6 +153,7 @@ const EventForm = () => {
               </Field>
               <ErrorMessage name="medium" component="div" className="error" />
             </div>
+
             <div className="form-group">
               <label htmlFor="startDate">Start Date</label>
               <Field
@@ -252,14 +255,14 @@ const EventForm = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="imageUrl">Image URL</label>
+              <label htmlFor="imageURL">Image URL</label>
               <Field
                 type="text"
-                id="imageUrl"
-                name="imageUrl"
+                id="imageURL"
+                name="imageURL"
                 className="input-field"
               />
-              <ErrorMessage name="imageUrl" component="div" className="error" />
+              <ErrorMessage name="imageURL" component="div" className="error" />
             </div>
 
             <button type="submit" disabled={isSubmitting} className="submit">

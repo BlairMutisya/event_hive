@@ -1,15 +1,15 @@
-from flask import Flask, request, jsonify, Response
+import random
+from flask import Flask, request, Response
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
-import jwt
-import datetime
-from functools import wraps
+from datetime import datetime, timedelta
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity
-import random
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
+from flask_login import current_user, login_required
+from flask import jsonify
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})  # Apply CORS to your Flask app
@@ -94,23 +94,6 @@ reservations_schema = ReservationSchema(many=True)
 contact_schema = ContactSchema()
 contacts_schema = ContactSchema(many=True)
 
-# Token required decorator
-def token_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        token = request.headers.get('x-access-tokens')
-        if not token:
-            return jsonify({'message': 'Token is missing!'}), 403
-
-        try:
-            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
-            current_user = User.query.filter_by(id=data['id']).first()
-        except:
-            return jsonify({'message': 'Token is invalid!'}), 403
-
-        return f(current_user, *args, **kwargs)
-    return decorated
-
 # Root route
 @app.route('/')
 def index():
@@ -120,7 +103,7 @@ def index():
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
-    hashed_password = generate_password_hash(data['password'], method='sha256')
+    hashed_password = generate_password_hash(data['password'], method='pbkdf2:sha256')
     new_user = User(username=data['username'], email=data['email'], password=hashed_password)
     db.session.add(new_user)
     db.session.commit()
@@ -135,9 +118,8 @@ def login():
     if not user or not check_password_hash(user.password, data['password']):
         return jsonify({'message': 'Invalid credentials'}), 401
 
-    token = create_access_token(identity=user.id, expires_delta=datetime.timedelta(hours=24))
+    token = create_access_token(identity=user.id, expires_delta=timedelta(hours=24))  # Correct usage of timedelta
     return jsonify({'token': token})
-
 
 # Handle preflight requests
 @app.before_request
@@ -147,20 +129,20 @@ def handle_preflight():
 
 # CRUD operations for User
 @app.route('/users', methods=['GET'])
-@token_required
-def get_users(current_user):
+@jwt_required()
+def get_users():
     all_users = User.query.all()
     return users_schema.jsonify(all_users)
 
-@app.route('/users/<id>', methods=['GET'])
-@token_required
-def get_user(current_user, id):
+@app.route('/users/<int:id>', methods=['GET'])
+@jwt_required()
+def get_user(id):
     user = User.query.get_or_404(id)
     return user_schema.jsonify(user)
 
-@app.route('/users/<id>', methods=['PUT'])
-@token_required
-def update_user(current_user, id):
+@app.route('/users/<int:id>', methods=['PUT'])
+@jwt_required()
+def update_user(id):
     user = User.query.get_or_404(id)
     data = request.get_json()
     user.username = data['username']
@@ -170,9 +152,9 @@ def update_user(current_user, id):
     db.session.commit()
     return user_schema.jsonify(user)
 
-@app.route('/users/<id>', methods=['DELETE'])
-@token_required
-def delete_user(current_user, id):
+@app.route('/users/<int:id>', methods=['DELETE'])
+@jwt_required()
+def delete_user(id):
     user = User.query.get_or_404(id)
     db.session.delete(user)
     db.session.commit()
@@ -180,12 +162,12 @@ def delete_user(current_user, id):
 
 # CRUD operations for Reservation
 @app.route('/reservations', methods=['POST'])
-@token_required
-def add_reservation(current_user):
+@jwt_required()
+def add_reservation():
     data = request.get_json()
     new_reservation = Reservation(
         event_id=data['event_id'],
-        user_id=current_user.id,
+        user_id=get_jwt_identity(),
         status=data['status']
     )
     db.session.add(new_reservation)
@@ -193,20 +175,20 @@ def add_reservation(current_user):
     return reservation_schema.jsonify(new_reservation)
 
 @app.route('/reservations', methods=['GET'])
-@token_required
-def get_reservations(current_user):
+@jwt_required()
+def get_reservations():
     all_reservations = Reservation.query.all()
     return reservations_schema.jsonify(all_reservations)
 
-@app.route('/reservations/<id>', methods=['GET'])
-@token_required
-def get_reservation(current_user, id):
+@app.route('/reservations/<int:id>', methods=['GET'])
+@jwt_required()
+def get_reservation(id):
     reservation = Reservation.query.get_or_404(id)
     return reservation_schema.jsonify(reservation)
 
-@app.route('/reservations/<id>', methods=['PUT'])
-@token_required
-def update_reservation(current_user, id):
+@app.route('/reservations/<int:id>', methods=['PUT'])
+@jwt_required()
+def update_reservation(id):
     reservation = Reservation.query.get_or_404(id)
     data = request.get_json()
     reservation.event_id = data['event_id']
@@ -215,134 +197,109 @@ def update_reservation(current_user, id):
     db.session.commit()
     return reservation_schema.jsonify(reservation)
 
-@app.route('/reservations/<id>', methods=['DELETE'])
-@token_required
-def delete_reservation(current_user, id):
+@app.route('/reservations/<int:id>', methods=['DELETE'])
+@jwt_required()
+def delete_reservation(id):
     reservation = Reservation.query.get_or_404(id)
     db.session.delete(reservation)
     db.session.commit()
     return jsonify({'message': 'Reservation deleted'})
 
 # CRUD operations for Event
-@app.route('/events', methods=['POST', 'OPTIONS'])
-@token_required
-def add_event(current_user):
-    if request.method == 'OPTIONS':
-        return Response(status=204)
+@app.route('/events', methods=['POST'])
+def add_event():
     try:
         data = request.get_json()
+
+        # Validate required fields are present
+        required_fields = ['title', 'description', 'date', 'location', 'medium', 'startDate', 'endDate', 'startTime', 'endTime', 'maxParticipants', 'category', 'acceptReservation', 'imageURL']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error": f"Missing required field: {field}"}), 422
+
+        # Parse date and time strings into Python datetime objects
+        date = datetime.strptime(data['date'], '%Y-%m-%d').date()
+        start_date = datetime.strptime(data['startDate'], '%Y-%m-%d').date()
+        end_date = datetime.strptime(data['endDate'], '%Y-%m-%d').date()
+        start_time = datetime.strptime(data['startTime'], '%H:%M').time()
+        end_time = datetime.strptime(data['endTime'], '%H:%M').time()
+
         new_event = Event(
             title=data['title'],
             description=data['description'],
-            date=data['date'],
+            date=date,
             location=data['location'],
             medium=data['medium'],
-            start_date=data['startDate'],
-            end_date=data['endDate'],
-            start_time=data['startTime'],
-            end_time=data['endTime'],
+            start_date=start_date,
+            end_date=end_date,
+            start_time=start_time,
+            end_time=end_time,
             max_participants=data['maxParticipants'],
             category=data['category'],
             accept_reservation=data['acceptReservation'],
-            image_url=data['imageUrl'],
-            user_id=current_user.id
+            image_url=data['imageURL'],
+            user_id=data['user_id']  # Assuming 'user_id' is provided in the request data
         )
         db.session.add(new_event)
         db.session.commit()
-        return event_schema.jsonify(new_event), 201
+
+        # Serialize the new_event object using EventSchema
+        serialized_event = event_schema.dump(new_event)
+        return jsonify(serialized_event), 201  # Return serialized event with HTTP status code 201
+    except KeyError as e:
+        db.session.rollback()
+        return jsonify({"error": f"KeyError: Missing required field - {str(e)}"}), 422
     except Exception as e:
-        print(f"Error adding event: {str(e)}")
-        return jsonify({'message': 'Error adding event'}), 500
-
-
+        db.session.rollback()
+        print(f"Error creating event: {e}")
+        return jsonify({"error": "Failed to create event"}), 500
 
 @app.route('/events', methods=['GET'])
-@token_required
-def get_events(current_user):
+def get_events():
     all_events = Event.query.all()
-    return events_schema.jsonify(all_events)
+    serialized_events = events_schema.dump(all_events)
+    return jsonify(serialized_events)
 
-@app.route('/events/<id>', methods=['GET'])
-@token_required
-def get_event(current_user, id):
+@app.route('/events/<int:id>', methods=['GET'])
+def get_event(id):
     event = Event.query.get_or_404(id)
     return event_schema.jsonify(event)
 
-@app.route('/events/<id>', methods=['PUT'])
-@token_required
-def update_event(current_user, id):
+@app.route('/events/<int:id>', methods=['PUT'])
+def update_event(id):
     event = Event.query.get_or_404(id)
     data = request.get_json()
     event.title = data['title']
     event.description = data['description']
-    event.date = data['date']
+    event.date = datetime.strptime(data['date'], '%Y-%m-%d').date()
     event.location = data['location']
     event.medium = data['medium']
-    event.start_date = data['startDate']
-    event.end_date = data['endDate']
-    event.start_time = data['startTime']
-    event.end_time = data['endTime']
+    event.start_date = datetime.strptime(data['startDate'], '%Y-%m-%d').date()
+    event.end_date = datetime.strptime(data['endDate'], '%Y-%m-%d').date()
+    event.start_time = datetime.strptime(data['startTime'], '%H:%M').time()
+    event.end_time = datetime.strptime(data['endTime'], '%H:%M').time()
     event.max_participants = data['maxParticipants']
     event.category = data['category']
     event.accept_reservation = data['acceptReservation']
-    event.image_url = data['imageUrl']
-    event.user_id = current_user.id
+    event.image_url = data['imageURL']
     db.session.commit()
     return event_schema.jsonify(event)
 
-@app.route('/events/<id>', methods=['DELETE'])
-@token_required
-def delete_event(current_user, id):
+@app.route('/events/<int:id>', methods=['DELETE'])
+def delete_event(id):
     event = Event.query.get_or_404(id)
     db.session.delete(event)
     db.session.commit()
     return jsonify({'message': 'Event deleted'})
 
-# CRUD operations for Contact
-@app.route('/contact', methods=['POST'])
-def add_contact():
-    data = request.get_json()
-    new_contact = Contact(
-        name=data['name'],
-        email=data['email'],
-        message=data['message']
-    )
-    db.session.add(new_contact)
-    db.session.commit()
-    return contact_schema.jsonify(new_contact)
+# Error handling
+@app.errorhandler(404)
+def page_not_found(e):
+    return jsonify({"error": "Not Found"}), 404
 
-@app.route('/contact', methods=['GET'])
-@token_required
-def get_contacts(current_user):
-    all_contacts = Contact.query.all()
-    return contacts_schema.jsonify(all_contacts)
-
-@app.route('/contact/<id>', methods=['GET'])
-@token_required
-def get_contact(current_user, id):
-    contact = Contact.query.get_or_404(id)
-    return contact_schema.jsonify(contact)
-
-@app.route('/contact/<id>', methods=['PUT'])
-@token_required
-def update_contact(current_user, id):
-    contact = Contact.query.get_or_404(id)
-    data = request.get_json()
-    contact.name = data['name']
-    contact.email = data['email']
-    contact.message = data['message']
-    db.session.commit()
-    return contact_schema.jsonify(contact)
-
-@app.route('/contact/<id>', methods=['DELETE'])
-@token_required
-def delete_contact(current_user, id):
-    contact = Contact.query.get_or_404(id)
-    db.session.delete(contact)
-    db.session.commit()
-    return jsonify({'message': 'Contact deleted'})
+@app.errorhandler(500)
+def internal_server_error(e):
+    return jsonify({"error": "Internal Server Error"}), 500
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
     app.run(debug=True)

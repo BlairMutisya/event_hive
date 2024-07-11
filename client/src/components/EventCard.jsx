@@ -8,21 +8,24 @@ const EventCard = ({ event, onDelete }) => {
   };
 
   return (
-    <div className="card">
-      <h3>{event.title}</h3>
-      <p>{event.description}</p>
-      <p>Date: {new Date(event.date).toLocaleDateString()}</p>
-      <p>Location: {event.location}</p>
-      <div className="buttons">
-        <Link to={`/events/${event.id}`} className="explore-btn">
-          View Details
-        </Link>
-        <button className="dashboard-btn" onClick={handleDelete}>
-          Delete
-        </button>
-        <Link to={`/events/${event.id}/edit`} className="dashboard-btn">
-          Update
-        </Link>
+    <div className="event-card">
+      <img src={event.image_url} alt={event.title} className="event-card-image" />
+      <div className="event-card-details">
+        <h3 className="event-card-title">{event.title}</h3>
+        <p className="event-card-description">{event.description}</p>
+        <p className="event-card-date">Date: {new Date(event.date).toLocaleDateString()}</p>
+        <p className="event-card-location">Location: {event.location}</p>
+        <div className="event-card-buttons">
+          <Link to={`/events/${event.id}`} className="event-card-button">
+            View Details
+          </Link>
+          <button className="event-card-button" onClick={handleDelete}>
+            Delete
+          </button>
+          <Link to={`/events/${event.id}/edit`} className="event-card-button">
+            Update
+          </Link>
+        </div>
       </div>
     </div>
   );

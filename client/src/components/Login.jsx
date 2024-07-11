@@ -17,7 +17,6 @@ function Login() {
           initialValues={{ email: "", password: "" }}
           validationSchema={loginSchema}
           onSubmit={(values, { setSubmitting }) => {
-            // Submit login data to API
             fetch("http://localhost:5000/login", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -31,6 +30,7 @@ function Login() {
               })
               .then((data) => {
                 alert(`Welcome, ${data.username}!`); // Show a popup with welcome message
+                localStorage.setItem("token", data.token); // Save the token to localStorage
                 setSubmitting(false);
                 // Redirect to dashboard or handle login success
                 // For example, you can use history.push('/dashboard') if using React Router

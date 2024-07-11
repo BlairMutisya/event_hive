@@ -1,24 +1,24 @@
-import React from 'react'
+import React from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 
-const Contact = () => {
-   // Validation schema for Formik
-   const ContactSchema = Yup.object().shape({
+const ContactUs = () => {
+  // Validation schema for Formik
+  const ContactSchema = Yup.object().shape({
     name: Yup.string().required("Name is required"),
     email: Yup.string().email("Invalid email").required("Email is required"),
     subject: Yup.string().required("Subject is required"),
     message: Yup.string().required("Message is required"),
   });
+
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
       const response = await fetch("http://localhost:5000/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Origin: "http://localhost:3000/contact", // Specify the origin of the request
-          // Add any other headers needed for your request
         },
         body: JSON.stringify(values),
-        credentials: "same-origin", // Include credentials like cookies if necessary
       });
 
       if (!response.ok) {
@@ -35,6 +35,7 @@ const Contact = () => {
       setSubmitting(false);
     }
   };
+
   return (
     <div className="contact-us-section">
       <h2>Contact Us</h2>
@@ -73,6 +74,6 @@ const Contact = () => {
       </Formik>
     </div>
   );
-}
+};
 
-export default Contact
+export default ContactUs;

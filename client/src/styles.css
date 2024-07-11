@@ -471,75 +471,116 @@
   }
   
   /* Adjust dropdown content color */
-  .select-field {
-    color: black; /* Change dropdown content color to black */
-  }
-  .event-list-container {
-    padding: 20px;
-    background-color: #f9f9f9;
-  }
-  
-  .event-list-title {
-    font-size: 2rem;
-    margin-bottom: 20px;
-  }
-  
-  .event-list-filter-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px;
-    background-color: #e5e7eb;
-    border-radius: 18px;
-    margin-bottom: 20px;
-    outline: 1px solid #e5e7eb;
-  }
-  
-  .event-list-search-input {
-    flex-grow: 1;
-    padding: 10px;
-    background-color: transparent;
-    border: none;
-    outline: none;
-  }
-  
-  .event-list-filter-select {
-    flex-grow: 0;
-    padding: 10px;
-    background-color: transparent;
-    border: none;
-    outline: none;
-    border-left: 1px solid #d1d5db;
-    margin-left: 10px;
-  }
-  
-  .event-list-card-slider {
-    overflow: hidden;
-  }
-  
-  .event-list-card-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5cm;
-  }
-  
-  .event-list-no-events {
-    color: #6b7280;
-  }
-  
-  .event-list-create-event-link {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #fe4e5b;
-    color: #fff;
-    border-radius: 5px;
-    text-decoration: none;
-    margin-top: 20px;
-    margin-left: 550px;
-  }
-  
-  .event-list-create-event-link:hover { 
-    background-color: red;
-  }
-  
-  
+  /* styles.css */
+
+.event-list-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.event-list-filter-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.event-list-search-input {
+  padding: 8px;
+  width: 200px;
+}
+
+.event-list-filter-select {
+  padding: 8px;
+  width: 150px;
+}
+
+.event-list-card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.event-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.event-card-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.event-card-details {
+  padding: 16px;
+}
+
+.event-card-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.event-card-description {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.event-card-date {
+  font-size: 12px;
+  color: #666;
+}
+
+.event-card-location {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.event-card-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+.event-card-button {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+}
+
+.event-card-button:hover {
+  background-color: #0056b3;
+}
+
+.event-list-no-events {
+  margin-top: 20px;
+  text-align: center;
+  color: #666;
+}
+.event-list-create-event-link {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #28a745; /* Change this color to match your design */
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.event-list-create-event-link:hover {
+  background-color: #218838; /* Change this color for hover state */
+  transform: translateY(-2px);
+}
